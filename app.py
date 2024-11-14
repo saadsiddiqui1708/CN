@@ -1,13 +1,14 @@
 from flask import Flask, render_template, request
 import joblib
 import numpy as np
-import matplotlib.pyplot as plt
+import plotly
+import plotly.graph_objects as go
+
+app = Flask(__name__)
 
 # Load pre-trained model and scaler
 model = joblib.load('model.joblib')
 scaler = joblib.load('scaler.joblib')
-
-app = Flask(__name__)
 
 @app.route('/')
 def index():
@@ -28,17 +29,20 @@ def predict():
         # Predict using the loaded model
         prediction = model.predict(features_scaled)[0]
 
-        # Generate plot
-        plt.figure(figsize=(6, 4))
-        plt.bar(['Manpower Hours', 'Equipment Hours', 'Project Stage'], 
-                [manpower_hours, equipment_hours, project_stage*100], color=['blue', 'green', 'red'])
-        plt.xlabel('Feature')
-        plt.ylabel('Value')
-        plt.title('Input Features')
-        plt.savefig('static/plot.png')
-        plt.close()
+        # Create Plotly chart
+        fig = go.Figure(
+            go.Indicator(
+                mode="gauge+number",
+                value=prediction,
+                domain={'x': [0, 1], 'y': [0, 1]},
+                title={'text': "Predicted Hours Remaining"}
+            )
+        )
+        
+        # Convert Plotly figure to HTML div
+        chart_div = plotly.offline.plot(fig, include_plotlyjs=False, output_type='div')
 
-        return render_template('result.html', prediction=round(prediction, 2))
+        return render_template('result.html', prediction=round(prediction, 2), chart_div=chart_div)
 
 if __name__ == '__main__':
     app.run(debug=True)
