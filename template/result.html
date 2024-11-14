@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prediction Result</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 </head>
 <body class="bg-light">
     <div class="container mt-5">
@@ -12,7 +13,7 @@
             <h2 class="text-center mb-4">Prediction Result</h2>
             <p class="text-center lead">Predicted Hours Remaining: <strong>{{ prediction }}</strong></p>
             <div class="text-center mt-3">
-                <img src="{{ url_for('static', filename='plot.png') }}" alt="Prediction Plot" class="img-fluid rounded shadow">
+                {{ chart_div|safe }}
             </div>
             <div class="mt-4">
                 <a href="/" class="btn btn-secondary btn-block">Make Another Prediction</a>
